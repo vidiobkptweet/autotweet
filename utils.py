@@ -1,50 +1,58 @@
+import tweepy
 import os
 import random
-import requests
 from dotenv import load_dotenv
-import tweepy
 
-# Load token dari .env
 load_dotenv()
 
-# Ambil semua kredensial dari .env
-API_KEY = os.getenv("TWITTER_API_KEY")
-API_SECRET = os.getenv("TWITTER_API_SECRET")
-ACCESS_TOKEN = os.getenv("TWITTER_ACCESS_TOKEN")
-ACCESS_SECRET = os.getenv("TWITTER_ACCESS_SECRET")
-BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
+# Inisialisasi koneksi ke Twitter API
+def initialize_tweepy():
+    api_key = os.getenv("API_KEY")
+    api_secret = os.getenv("API_SECRET")
+    access_token = os.getenv("ACCESS_TOKEN")
+    access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
 
-# Inisialisasi Tweepy
-auth = tweepy.OAuth1UserHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
-api = tweepy.API(auth)
+    auth = tweepy.OAuthHandler(api_key, api_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
+    return api
 
-def get_trending_hashtags(api, woeid=23424846):  # 23424846 = Indonesia
+# Ambil hashtag trending Indonesia
+def get_trending_hashtags(api, woeid=23424846):  # WOEID Indonesia
     try:
         data = api.get_place_trends(id=woeid)
         if not data or "trends" not in data[0]:
-            print("Tidak ada data tren yang valid")
+            print("Tidak ada data tren.")
             return []
-        
         trends = data[0]["trends"]
         hashtags = [trend["name"] for trend in trends if trend["name"].startswith("#")]
-        return hashtags[:3]  # Ambil 3 teratas misalnya
+        return hashtags[:3]  # ambil 3 trending hashtag teratas
     except Exception as e:
-        print("Gagal mendapatkan trending hashtags:", e)
+        print("Gagal ambil hashtag trending:", e)
         return []
 
+# Kirim tweet
 def post_tweet(api, content):
     hashtags = get_trending_hashtags(api)
     hashtag_str = ' '.join(hashtags)
-    tweet_with_hashtags = f"{content}\n\n{hashtag_str}"
-    api.update_status(tweet_with_hashtags)
-    print("Tweet dikirim:", tweet_with_hashtags)
+    tweet = f"{content}\n\n{hashtag_str}"
+    try:
+        api.update_status(tweet)
+        print("✅ Tweet terkirim:\n", tweet)
+    except Exception as e:
+        print("❌ Gagal kirim tweet:", e)
 
+# Pilih tweet acak dari file dan kirim
 def send_random_tweet():
-    api, _ = initialize_tweepy()
-    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'tweets.txt'), 'r') as file:
-        lines = file.readlines()
-        tweet_text = random.choice(lines).strip()
-        post_tweet(api, tweet_text)
-
-
-send_random_tweet()
+    api = initialize_tweepy()
+    tweets_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tweets.txt')
+    try:
+        with open(tweets_path, 'r') as file:
+            lines = file.readlines()
+            if not lines:
+                print("File tweets.txt kosong.")
+                return
+            tweet_text = random.choice(lines).strip()
+            post_tweet(api, tweet_text)
+    except FileNotFoundError:
+        print(f"File tidak ditemukan: {tweets_path}")
