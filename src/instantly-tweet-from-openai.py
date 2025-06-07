@@ -4,7 +4,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'config'))
 import keys
 from functions import generate_response, initialize_tweepy, get_formatted_date
 
-prompt = "Create a short tweet about Motorbikes."
+prompt = "buatkan saya tweet singkat lucu dengan hashtag #vidiobkp #vidiobokehp dan mention yang lagi trend"
 response = generate_response(prompt)
 
 def send_post():
