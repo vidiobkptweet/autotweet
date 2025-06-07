@@ -18,22 +18,22 @@ BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
 auth = tweepy.OAuth1UserHandler(API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-def get_trending_hashtags(woeid=23424846):  # WOEID Indonesia
-    url = f"https://api.twitter.com/1.1/trends/place.json?id={woeid}"
-    headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
-    response = requests.get(url, headers=headers)
-    data = response.json()
+def get_trending_hashtags(api, woeid=23424846):  # 23424846 = Indonesia
+    try:
+        data = api.get_place_trends(id=woeid)
+        if not data or "trends" not in data[0]:
+            print("Tidak ada data tren yang valid")
+            return []
+        
+        trends = data[0]["trends"]
+        hashtags = [trend["name"] for trend in trends if trend["name"].startswith("#")]
+        return hashtags[:3]  # Ambil 3 teratas misalnya
+    except Exception as e:
+        print("Gagal mendapatkan trending hashtags:", e)
+        return []
 
-    trending = []
-    for trend in data[0]["trends"]:
-        if trend["name"].startswith("#"):
-            trending.append(trend["name"])
-        if len(trending) >= 3:
-            break
-    return trending
-
-def post_tweet(content):
-    hashtags = get_trending_hashtags()
+def post_tweet(api, content):
+    hashtags = get_trending_hashtags(api)
     hashtag_str = ' '.join(hashtags)
     tweet_with_hashtags = f"{content}\n\n{hashtag_str}"
     api.update_status(tweet_with_hashtags)
