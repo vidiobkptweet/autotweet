@@ -18,7 +18,7 @@ def get_formatted_date():
 
 def generate_response(prompt):
     client = OpenAI(api_key=keys.openai_key)
-    model = "gpt-4.1"
+    model = "gpt-4-1106-preview"
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": prompt}
