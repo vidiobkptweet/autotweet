@@ -40,9 +40,11 @@ def post_tweet(api, content):
     print("Tweet dikirim:", tweet_with_hashtags)
 
 def send_random_tweet():
-    with open("data/tweets.txt", "r") as file:
+    api, _ = initialize_tweepy()
+    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'tweets.txt'), 'r') as file:
         lines = file.readlines()
         tweet_text = random.choice(lines).strip()
-        post_tweet(tweet_text)
+        post_tweet(api, tweet_text)
+
 
 send_random_tweet()
