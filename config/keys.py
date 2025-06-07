@@ -1,15 +1,6 @@
-import os
-import tweepy
-
-API_KEY = os.environ['KQ9Lq80TDV9mYba6xa3qwYYAq']
-API_SECRET = os.environ['RPMd7WK16eiYLv9pj6BDTW0hWvANYJ5bDYl5n82fXad7D2TkdV']
-ACCESS_TOKEN = os.environ['1931122807867613184-EezLYRrQ7lmkrpdMV0OqV0bEcbVcWK']
-ACCESS_SECRET = os.environ['PWCrven42c7OMXvPm5tcNNlSjsFk0TbYt7rYY8DyCXYU7']
-
-auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-
-api = tweepy.API(auth)
-
-# Contoh tweet
-api.update_status("Halo dunia dari GitHub Actions 🚀")
+bearer_token = "AAAAAAAAAAAAAAAAAAAAAGs72QEAAAAAGrw0EOUUAwLpfcU9l4TmBpMYtLE%3DL1Bo26x6MB9n4OR9vrBkY868O7AV2H2lR0J92Vytu9UlnbIXDL"
+api_key = "KQ9Lq80TDV9mYba6xa3qwYYAq"
+api_secret = "RPMd7WK16eiYLv9pj6BDTW0hWvANYJ5bDYl5n82fXad7D2TkdV"
+access_token = "1931122807867613184-EezLYRrQ7lmkrpdMV0OqV0bEcbVcWK"
+access_token_secret = "PWCrven42c7OMXvPm5tcNNlSjsFk0TbYt7rYY8DyCXYU7"
+openai_key = "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"
